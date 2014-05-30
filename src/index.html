@@ -4,6 +4,7 @@
   <title></title>
 </head>
 <link rel="stylesheet" type="text/css" href="css/reset.css">
+
 <style type="text/css">
 .main {
   width: 260px;
@@ -20,7 +21,6 @@
   margin-bottom: 36px;
 }
 button {
-  border-radius: 8px;
   background: #7ED321;
   width: 224px;
   height: 67px;
@@ -31,6 +31,7 @@ button {
   border-style: none;
   /* Start Recording: */
   margin-bottom: 36px;
+  border: none;
 }
 
 button.init {
@@ -49,8 +50,14 @@ button.recording {
   <div class="main">
     <div class="camera-area"></div>
     <button class='init'>Start Recording</button>
-    <button class='ready'>Ready in 3</button>
-    <button class='recording'>Recording...</button>
   </div>
+  <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js'></script>
+  <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js'></script>
+  <script type="text/javascript" src='js/main.js'></script>
+  <script type="text/javascript">
+  $(document).ready(function () {
+    main();
+  });
+  </script>
 </body>
 </html>

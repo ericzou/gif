@@ -1,0 +1,108 @@
+(function (window, $, _) {
+  'use strict';
+
+  var states = {
+    init: [ 'ready'],
+    ready: ['recording'],
+    recording: ['finish'],
+    finish: ['init']
+  };
+
+  var currentState = null;
+
+  var stateFns = {}
+
+  function registerClick(selector, handler) {
+    $(selector).on('click', handler);
+  }
+
+  function deRegisterClick(selector) {
+    $(selector).off();
+  }
+
+  function isValidTransition (state) {
+    return $.inArray(state, states[currentState]) >= 0;
+  }
+
+  function syncButtonState() {
+    clearButtonState().addClass(currentState);
+  }
+
+  function clearButtonState() {
+    $('button').removeClass();
+    deRegisterClick('button');
+    return $('button');
+  }
+
+  function transitionTo (state) {
+    console.log("state", state);
+    var stateFnName = 'enter' + state.slice(0, 1).toUpperCase() + state.slice(1);
+    console.log('statename', stateFnName);
+    if (isValidTransition(state)) {
+      currentState = state;
+      stateFns[stateFnName].apply();
+    } else {
+      console.error('Invalid state transition from ' + currentState + ' to ' + state);
+    }
+  }
+
+  function initButtonClicked() {
+    console.log("init button clicked");
+    transitionTo('ready');
+  }
+
+  function finishButtonClicked() {
+    console.log("finish button clicked");
+    transitionTo('init');
+  }
+
+  stateFns.enterInit = function () {
+    syncButtonState();
+    registerClick('button', initButtonClicked);
+    $('button').text('Start Recording');
+  }
+
+  stateFns.enterReady = function () {
+    var count = 3;
+    var timer;
+    syncButtonState();
+
+    $('button').text('Ready in ' + count + '...');
+
+    timer = setInterval(function () {
+      console.log("count down in ", count);
+      count -= 1;
+      if (count <= 0) {
+        clearInterval(timer);
+        transitionTo('recording');
+      } else {
+        $('button').text('Ready in ' + count + '...');
+      }
+
+    }, 1000);
+  }
+
+  stateFns.enterRecording = function() {
+    var timer;
+
+    syncButtonState();
+    $('button').text('Recording...');
+
+    timer = setTimeout(function () {
+      transitionTo('finish');
+    }, 2000)
+  }
+
+  stateFns.enterFinish = function () {
+    syncButtonState();
+    registerClick('button', finishButtonClicked);
+    $('button').text('Start Again');
+  }
+
+  window.main = function () {
+    currentState = 'finish' // hack to be able to transition to init
+    transitionTo('init');
+  };
+
+
+})(window, $, _);
