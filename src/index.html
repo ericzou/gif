@@ -7,7 +7,7 @@
 
 <style type="text/css">
 .main {
-  width: 260px;
+  /*width: 260px;*/
   margin: 107px auto;
   display: flex;
   flex-direction: column;
@@ -17,7 +17,6 @@
 .progress-bar {
   height: 2px;
   background: #EC5265;
-  width: 260px;
   align-self: flex-start;
   display: none
 }
@@ -57,12 +56,16 @@ button.recording {
 <body>
   <div class="main">
     <div class="progress-bar"></div>
-    <div class="camera-area"></div>
+    <div class="camera-area">
+      <video></video>
+    </div>
     <button class='init'>Start Recording</button>
   </div>
   <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js'></script>
   <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js'></script>
+  <script type="text/javascript" src='js/Animated_GIF.js'></script>
   <script type="text/javascript" src='js/main.js'></script>
+  <script type="text/javascript" src='js/media.js'></script>
   <script type="text/javascript">
   $(document).ready(function () {
     main();

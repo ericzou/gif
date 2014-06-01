@@ -37,7 +37,7 @@
   }
 
   function clearProgressState() {
-    $('.progress-bar').css('width', 260);
+    $('.progress-bar').css('width', 0);
     $('.progress-bar').hide();
     return $('.progress-bar');
   }
@@ -48,7 +48,7 @@
     }
 
     clearProgressState().show().animate({
-      width: 0
+      width: 260
     }, RECORDING_LENGTH);
   }
 
