@@ -1,6 +1,8 @@
 (function (window, $, _) {
   'use strict';
 
+  var RECORDING_LENGTH = 2000;
+
   var states = {
     init: [ 'ready'],
     ready: ['recording'],
@@ -32,6 +34,22 @@
     $('button').removeClass();
     deRegisterClick('button');
     return $('button');
+  }
+
+  function clearProgressState() {
+    $('.progress-bar').css('width', 260);
+    $('.progress-bar').hide();
+    return $('.progress-bar');
+  }
+
+  function showProgressBar() {
+    if (currentState != 'recording') {
+      throw 'current state should be in recording, but it actually is '  + currentState;
+    }
+
+    clearProgressState().show().animate({
+      width: 0
+    }, RECORDING_LENGTH);
   }
 
   function transitionTo (state) {
@@ -86,11 +104,13 @@
     var timer;
 
     syncButtonState();
+    showProgressBar();
     $('button').text('Recording...');
 
     timer = setTimeout(function () {
+      clearProgressState();
       transitionTo('finish');
-    }, 2000)
+    }, RECORDING_LENGTH);
   }
 
   stateFns.enterFinish = function () {

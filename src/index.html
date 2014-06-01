@@ -12,8 +12,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-
 }
+
+.progress-bar {
+  height: 2px;
+  background: #EC5265;
+  width: 260px;
+  align-self: flex-start;
+  display: none
+}
+
 .camera-area {
   width: 260px;
   height: 195px;
@@ -48,6 +56,7 @@ button.recording {
 </style>
 <body>
   <div class="main">
+    <div class="progress-bar"></div>
     <div class="camera-area"></div>
     <button class='init'>Start Recording</button>
   </div>
