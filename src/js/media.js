@@ -1,4 +1,4 @@
-(function (navigator, main, $, _) {
+(function (navigator, $, _) {
   'use strict';
   var width = 260;
   var height = 195;
@@ -92,4 +92,4 @@
   media.video = getVideo();
 
   // body...
-})(window.navigator, window.main, $, _);
+})(window.navigator, $, _);

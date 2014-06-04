@@ -1,4 +1,4 @@
-(function (window, $, _) {
+(function (window, media, $, _) {
   'use strict';
 
   var RECORDING_LENGTH = 2000;
@@ -7,7 +7,7 @@
     init: [ 'ready'],
     ready: ['recording'],
     recording: ['finish'],
-    finish: ['init']
+    finish: ['init', 'ready']
   };
 
   var currentState = null;
@@ -27,7 +27,7 @@
   }
 
   function syncButtonState() {
-    clearButtonState().addClass(currentState);
+    clearButtonState().addClass(currentState).blur();
   }
 
   function clearButtonState() {
@@ -71,7 +71,7 @@
 
   function finishButtonClicked() {
     console.log("finish button clicked");
-    transitionTo('init');
+    transitionTo('ready');
   }
 
   stateFns.enterInit = function () {
@@ -105,6 +105,8 @@
 
     syncButtonState();
     showProgressBar();
+    media.record(media.video, RECORDING_LENGTH);
+
     $('button').text('Recording...');
 
     timer = setTimeout(function () {
@@ -116,7 +118,7 @@
   stateFns.enterFinish = function () {
     syncButtonState();
     registerClick('button', finishButtonClicked);
-    $('button').text('Start Again');
+    $('button').text('Record another one');
   }
 
   window.main = function () {
@@ -125,4 +127,4 @@
   };
 
 
-})(window, $, _);
+})(window, window.media, $, _);
