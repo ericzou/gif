@@ -20,6 +20,7 @@
       },
       data: {
         image: imageData,
+        album: 'bZ3EoMpwPZ3N1Gf',
         type: 'base64'
       },
       success: function (response) {
