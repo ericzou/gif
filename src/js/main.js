@@ -52,25 +52,30 @@
     }, RECORDING_LENGTH);
   }
 
-  function transitionTo (state) {
-    console.log("state", state);
+  function transitionTo () {
+    var args = Array.prototype.slice.call(arguments);
+    var state = args.shift();
     var stateFnName = 'enter' + state.slice(0, 1).toUpperCase() + state.slice(1);
-    console.log('statename', stateFnName);
     if (isValidTransition(state)) {
       currentState = state;
-      stateFns[stateFnName].apply();
+      stateFns[stateFnName].apply(null, args);
     } else {
       console.error('Invalid state transition from ' + currentState + ' to ' + state);
     }
   }
 
+  function appendLinkTo(link, selector) {
+    var html = '<p class="link"><a target="_blank" href="' + link + '">'
+                      + link +
+                    '</a></p>'
+    $(selector).append(html);
+  }
+
   function initButtonClicked() {
-    console.log("init button clicked");
     transitionTo('ready');
   }
 
   function finishButtonClicked() {
-    console.log("finish button clicked");
     transitionTo('ready');
   }
 
@@ -81,11 +86,11 @@
   }
 
   stateFns.enterReady = function () {
-    var count = 3;
+    var count = 1;
     var timer;
     syncButtonState();
 
-    $('button').text('Ready in ' + count + '...');
+    $('button').text('Ready...');
 
     timer = setInterval(function () {
       console.log("count down in ", count);
@@ -105,20 +110,18 @@
 
     syncButtonState();
     showProgressBar();
-    media.record(media.video, RECORDING_LENGTH);
-
     $('button').text('Recording...');
-
-    timer = setTimeout(function () {
+    media.record(media.video, RECORDING_LENGTH).then(function (link) {
       clearProgressState();
-      transitionTo('finish');
-    }, RECORDING_LENGTH);
+      transitionTo('finish', link);
+    });
   }
 
-  stateFns.enterFinish = function () {
+  stateFns.enterFinish = function (link) {
     syncButtonState();
     registerClick('button', finishButtonClicked);
     $('button').text('Record another one');
+    appendLinkTo(link, '.main');
   }
 
   window.main = function () {
