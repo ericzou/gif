@@ -1,4 +1,4 @@
-(function (navigator, $, _) {
+(function (navigator, $, _, network) {
   'use strict';
   var width = 260;
   var height = 195;
@@ -42,34 +42,56 @@
     }).apply(navigator, arguments)
   }
 
-  getUserMedia({video: true}, function  (mediaStream) {
-    getVideo().src = window.URL.createObjectURL(mediaStream);
-    getVideo().play();
-  }, function (error) {
-    console.log("not getting the video stream");
-  });
+
 
   function setupVideoCapture() {
-    // body...
-  }
-
-  function createGif(frames) {
-    var ag = new Animated_GIF({ workerPath: 'js/Animated_GIF.worker.js' });
-    var animatedImage = document.createElement('img');
-    ag.setSize(width, height);
-    ag.setDelay(0);
-    for (var i = 0; i < frames.length; i++) {
-      ag.addFrame(frames[i]);
-    }
-
-    ag.getBase64GIF(function(image) {
-      animatedImage.src = image;
-      document.body.appendChild(animatedImage);
+    getUserMedia({video: true}, function  (mediaStream) {
+      getVideo().src = window.URL.createObjectURL(mediaStream);
+      getVideo().play();
+    }, function (error) {
+      console.log("not getting the video stream");
     });
   }
 
+  function createGif(frames) {
+    var gif = new Animated_GIF({ workerPath: 'js/Animated_GIF.worker.js' });
+    gif.setSize(width, height);
+    gif.setDelay(0);
+    for (var i = 0; i < frames.length; i++) {
+      gif.addFrame(frames[i]);
+    }
+
+    return gif;
+  }
+
+  function processGif(gif) {
+    var deferred = $.Deferred();
+
+    function upload(gif) {
+      return network.postToImgur(gif);
+    }
+
+    function appendToDocument(image) {
+      var animatedImage = document.createElement('img');
+      animatedImage.src = image;
+      document.body.appendChild(animatedImage);
+    }
+
+    function appendLink(link) {
+      var html = '<p class="link"><a target="_blank" href="' + link + '">' + link +
+      '</a></p>'
+      $('.main').append(html);
+    }
+
+    gif.getBase64GIF(function (image) {
+      appendToDocument(image);
+      upload(image).then(deferred.resolve);
+    });
+
+    return deferred.promise();
+  }
+
   window.media = function () {
-    setupVideoCapture();
   }
 
   media.record = function (video, duration) {
@@ -77,19 +99,27 @@
     var frameRate = 5;
     var counter = 0;
     var interval = Math.floor(1000/frameRate);
+    var deferred = $.Deferred();
+    var gif;
+
     var timer = setInterval(function () {
       frames.push(snapshot(video));
       counter += interval;
       if (counter > duration) {
         clearInterval(timer);
-        createGif(frames);
+        gif = createGif(frames);
+        processGif(gif).then(deferred.resolve);
       }
     }, interval);
+
+    return deferred.promise();
   }
+
+  setupVideoCapture();
 
   media.snapshot = snapshot;
 
   media.video = getVideo();
 
   // body...
-})(window.navigator, $, _);
+})(window.navigator, $, _, window.network);
