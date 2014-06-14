@@ -111,9 +111,9 @@
     syncButtonState();
     showProgressBar();
     $('button').text('Recording...');
-    media.record(media.video, RECORDING_LENGTH).then(function (link) {
+    media.record(media.video, RECORDING_LENGTH).then(function (data) {
       clearProgressState();
-      transitionTo('finish', link);
+      transitionTo('finish', data.link);
     });
   }
 

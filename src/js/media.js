@@ -77,15 +77,16 @@
       document.body.appendChild(animatedImage);
     }
 
-    function appendLink(link) {
-      var html = '<p class="link"><a target="_blank" href="' + link + '">' + link +
-      '</a></p>'
-      $('.main').append(html);
+    function saveToParse(data) {
+      return network.postToParse(data);
     }
 
     gif.getBase64GIF(function (image) {
+      var promise;
       appendToDocument(image);
-      upload(image).then(deferred.resolve);
+      promise = upload(image);
+      promise.then(saveToParse);
+      promise.then(deferred.resolve);
     });
 
     return deferred.promise();
