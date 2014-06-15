@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+<style type="text/css">
+.main {
+  width: 260px;
+  margin: 107px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.progress-bar {
+  height: 2px;
+  background: #EC5265;
+  align-self: flex-start;
+  display: none
+}
+
+.camera-area {
+  width: 260px;
+  height: 195px;
+  background-color: #ccc;
+  margin-bottom: 36px;
+}
+
+button {
+  background: #7ED321;
+  width: 224px;
+  height: 67px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 18px;
+  color: #FFFFFF;
+  line-height: 24px;
+  border-style: none;
+  /* Start Recording: */
+  margin-bottom: 36px;
+  border: none;
+}
+
+button.init {
+  background: #7ED321;
+}
+
+button.ready,
+button.processing {
+  background: #F8AD33;
+}
+
+button.recording {
+  background: #EC5265;
+}
+</style>
+<body>
+  <div class="main">
+    <div class="progress-bar"></div>
+    <div class="camera-area">
+      <video></video>
+    </div>
+    <button class='init'>Start Recording</button>
+  </div>
+  <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js'></script>
+  <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js'></script>
+  <script type="text/javascript" src='js/Animated_GIF.js'></script>
+  <script type="text/javascript" src='js/sm.js'></script>
+  <script type="text/javascript" src='js/network.js'></script>
+  <script type="text/javascript" src='js/process.js'></script>
+  <script type="text/javascript" src='js/media.js'></script>
+  <script type="text/javascript" src='js/main.js'></script>
+  <script type="text/javascript">
+  $(document).ready(function () {
+    main();
+  });
+  </script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-51740084-1', 'gifwebcam.com');
+    ga('send', 'pageview');
+  </script>
+</body>
+</html>
