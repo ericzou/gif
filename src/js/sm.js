@@ -11,7 +11,6 @@
   };
 
   function isValidTransition (state) {
-    debugger;
     return $.inArray(state, states[sm.currentState]) >= 0;
   }
 
