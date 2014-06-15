@@ -1,18 +1,7 @@
-(function (window, media, $, _) {
+(function (window, media, sm, process, $, _) {
   'use strict';
 
   var RECORDING_LENGTH = 2000;
-
-  var states = {
-    init: [ 'ready'],
-    ready: ['recording'],
-    recording: ['finish'],
-    finish: ['init', 'ready']
-  };
-
-  var currentState = null;
-
-  var stateFns = {}
 
   function registerClick(selector, handler) {
     $(selector).on('click', handler);
@@ -22,12 +11,8 @@
     $(selector).off();
   }
 
-  function isValidTransition (state) {
-    return $.inArray(state, states[currentState]) >= 0;
-  }
-
   function syncButtonState() {
-    clearButtonState().addClass(currentState).blur();
+    clearButtonState().addClass(sm.currentState).blur();
   }
 
   function clearButtonState() {
@@ -43,25 +28,13 @@
   }
 
   function showProgressBar() {
-    if (currentState != 'recording') {
-      throw 'current state should be in recording, but it actually is '  + currentState;
+    if (sm.currentState != 'recording') {
+      throw 'current state should be in recording, but it actually is '  + sm.currentState;
     }
 
     clearProgressState().show().animate({
       width: 260
     }, RECORDING_LENGTH);
-  }
-
-  function transitionTo () {
-    var args = Array.prototype.slice.call(arguments);
-    var state = args.shift();
-    var stateFnName = 'enter' + state.slice(0, 1).toUpperCase() + state.slice(1);
-    if (isValidTransition(state)) {
-      currentState = state;
-      stateFns[stateFnName].apply(null, args);
-    } else {
-      console.error('Invalid state transition from ' + currentState + ' to ' + state);
-    }
   }
 
   function appendLinkTo(link, selector) {
@@ -72,20 +45,20 @@
   }
 
   function initButtonClicked() {
-    transitionTo('ready');
+    sm.transitionTo('ready');
   }
 
   function finishButtonClicked() {
-    transitionTo('ready');
+    sm.transitionTo('ready');
   }
 
-  stateFns.enterInit = function () {
+  sm.enterInit = function () {
     syncButtonState();
     registerClick('button', initButtonClicked);
     $('button').text('Start Recording');
   }
 
-  stateFns.enterReady = function () {
+  sm.enterReady = function () {
     var count = 1;
     var timer;
     syncButtonState();
@@ -97,7 +70,7 @@
       count -= 1;
       if (count <= 0) {
         clearInterval(timer);
-        transitionTo('recording');
+        sm.transitionTo('recording');
       } else {
         $('button').text('Ready in ' + count + '...');
       }
@@ -105,19 +78,27 @@
     }, 1000);
   }
 
-  stateFns.enterRecording = function() {
+  sm.enterRecording = function() {
     var timer;
 
     syncButtonState();
     showProgressBar();
     $('button').text('Recording...');
-    media.record(media.video, RECORDING_LENGTH).then(function (data) {
+    media.record(media.video, RECORDING_LENGTH).then(function (gif) {
       clearProgressState();
-      transitionTo('finish', data.link);
+      sm.transitionTo('processing', gif);
     });
-  }
+  },
 
-  stateFns.enterFinish = function (link) {
+  sm.enterProcessing = function (gif) {
+    syncButtonState();
+    $('button').text('Uploading...');
+    process(gif).then(function (data) {
+      sm.transitionTo('finish', data.link);
+    });
+  },
+
+  sm.enterFinish = function (link) {
     syncButtonState();
     registerClick('button', finishButtonClicked);
     $('button').text('Record another one');
@@ -125,9 +106,8 @@
   }
 
   window.main = function () {
-    currentState = 'finish' // hack to be able to transition to init
-    transitionTo('init');
+    sm.transitionTo('init');
   };
 
 
-})(window, window.media, $, _);
+})(window, window.media, window.sm, window.process, $, _);

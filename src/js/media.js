@@ -1,4 +1,4 @@
-(function (navigator, $, _, network) {
+(function (navigator, $, _) {
   'use strict';
   var width = 260;
   var height = 195;
@@ -43,7 +43,6 @@
   }
 
 
-
   function setupVideoCapture() {
     getUserMedia({video: true}, function  (mediaStream) {
       getVideo().src = window.URL.createObjectURL(mediaStream);
@@ -64,34 +63,6 @@
     return gif;
   }
 
-  function processGif(gif) {
-    var deferred = $.Deferred();
-
-    function upload(gif) {
-      return network.postToImgur(gif);
-    }
-
-    function appendToDocument(image) {
-      var animatedImage = document.createElement('img');
-      animatedImage.src = image;
-      document.body.appendChild(animatedImage);
-    }
-
-    function saveToParse(data) {
-      return network.postToParse(data);
-    }
-
-    gif.getBase64GIF(function (image) {
-      var promise;
-      appendToDocument(image);
-      promise = upload(image);
-      promise.then(saveToParse);
-      promise.then(deferred.resolve);
-    });
-
-    return deferred.promise();
-  }
-
   window.media = function () {
   }
 
@@ -109,7 +80,7 @@
       if (counter > duration) {
         clearInterval(timer);
         gif = createGif(frames);
-        processGif(gif).then(deferred.resolve);
+        gif.getBase64GIF(deferred.resolve)
       }
     }, interval);
 
@@ -123,4 +94,4 @@
   media.video = getVideo();
 
   // body...
-})(window.navigator, $, _, window.network);
+})(window.navigator, $, _);
