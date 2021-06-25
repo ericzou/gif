@@ -45,7 +45,8 @@
 
   function setupVideoCapture() {
     getUserMedia({video: true}, function  (mediaStream) {
-      getVideo().src = window.URL.createObjectURL(mediaStream);
+      // getVideo().src = window.URL.createObjectURL(mediaStream);
+      getVideo().srcObject = mediaStream;
       getVideo().play();
     }, function (error) {
       console.log("not getting the video stream");
